@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Upload Site</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>📚 PDF Upload Website</h1>
+
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="pdfFile" accept="application/pdf" required />
+    <button type="submit">Upload PDF</button>
+  </form>
+
+  <h2>Uploaded PDFs</h2>
+  <div id="pdfList"></div>
+
+  <script>
+    async function loadPDFs() {
+      const res = await fetch("/files");
+      const pdfs = await res.json();
+      const listDiv = document.getElementById("pdfList");
+
+      if (pdfs.length === 0) {
+        listDiv.innerHTML = "<p>No PDFs uploaded yet.</p>";
+        return;
+      }
+
+      listDiv.innerHTML = pdfs
+        .map(
+          file => `
+          <div class="pdf-card">
+            <p>${file}</p>
+            <a href="/uploads/${file}" target="_blank">View</a>
+            <a href="/uploads/${file}" download>Download</a>
+          </div>`
+        )
+        .join("");
+    }
+
+    loadPDFs();
+  </script>
+</body>
+</html>
